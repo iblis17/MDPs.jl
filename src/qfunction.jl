@@ -22,7 +22,7 @@ where Q is a subtype of AbstractQFunction
 * num_actions(Q) -> the number of actions
 
 """ ->
-abstract AbstractQFunction
+abstract type AbstractQFunction end
 
 
 
@@ -30,11 +30,11 @@ abstract AbstractQFunction
 # Array type
 # ----------
 
-type ArrayQFunction{T<:Real} <: AbstractQFunction
+mutable struct ArrayQFunction{T<:Real} <: AbstractQFunction
     array::Array{T,2}
 end
 
-ArrayQFunction{T}(::Type{T}, states, actions) =
+ArrayQFunction(::Type{T}, states, actions) where {T} =
     ArrayQFunction(zeros(T, states, actions))
 
 ArrayQFunction(states, actions) = ArrayQFunction(Float64, states, actions)
@@ -73,14 +73,14 @@ function value!(A::Vector, Q::ArrayQFunction)
     return A
 end
 
-value{T}(Q::ArrayQFunction{T}) = value!(Array(T, num_states(Q)), Q)
+value(Q::ArrayQFunction{T}) where {T} = value!(Array(T, num_states(Q)), Q)
 
 getvalue(Q::ArrayQFunction, state, action) = getindex(Q.array, state, action)
 
 setvalue!(Q::ArrayQFunction, v, state, action) =
     (setindex!(Q.array, v, state, action); Q)
 
-valuetype{T}(Q::ArrayQFunction{T}) = T
+valuetype(Q::ArrayQFunction{T}) where {T} = T
 
 
 # Policy methods
@@ -95,7 +95,7 @@ function policy!(A::Vector, Q::ArrayQFunction)
     return A
 end
 
-policy{T}(::Type{T}, Q::ArrayQFunction) = policy!(Array(T, num_states(Q)), Q)
+policy(::Type{T}, Q::ArrayQFunction) where {T} = policy!(Array(T, num_states(Q)), Q)
 
 policy(Q::ArrayQFunction) = policy(Int, Q)
 
@@ -105,7 +105,7 @@ policy(Q::ArrayQFunction) = policy(Int, Q)
 # Vector type
 # -----------
 
-type VectorQFunction{V<:Real,A<:Integer} <: AbstractQFunction
+mutable struct VectorQFunction{V<:Real,A<:Integer} <: AbstractQFunction
     value::Vector{V}
     policy::Vector{A}
 
@@ -117,10 +117,10 @@ type VectorQFunction{V<:Real,A<:Integer} <: AbstractQFunction
     end
 end
 
-VectorQFunction{V,A}(value::Vector{V}, policy::Vector{A}) =
+VectorQFunction(value::Vector{V}, policy::Vector{A}) where {V,A} =
     VectorQFunction{V,A}(value, policy)
 
-VectorQFunction{V,A}(::Type{V}, ::Type{A}, states) =
+VectorQFunction(::Type{V}, ::Type{A}, states) where {V,A} =
     VectorQFunction(zeros(V, states), zeros(A, states))
 
 VectorQFunction(states) = VectorQFunction(Float64, Int, states)
@@ -162,7 +162,7 @@ value(Q::VectorQFunction, state) = getindex(Q.value, state)
 @doc """
 Returns negative infinity if `a` is not the optimal action.
 """ ->
-getvalue{V,A}(Q::VectorQFunction{V,A}, s, a) = Q.policy[s] == a ? Q.value[s] : convert(V, -Inf)
+getvalue(Q::VectorQFunction{V,A}, s, a) where {V,A} = Q.policy[s] == a ? Q.value[s] : convert(V, -Inf)
 
 function setvalue!(Q::VectorQFunction, v, state, action)
     if v > value(Q, state)
@@ -172,7 +172,7 @@ function setvalue!(Q::VectorQFunction, v, state, action)
     return Q
 end
 
-valuetype{V,A}(Q::VectorQFunction{V,A}) = V
+valuetype(Q::VectorQFunction{V,A}) where {V,A} = V
 
 
 # Policy methods

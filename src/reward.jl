@@ -13,9 +13,9 @@
 * reward(R, s)
 
 """ ->
-abstract AbstractReward
+abstract type AbstractReward end
 
-abstract AbstractArrayReward <: AbstractReward
+abstract type AbstractArrayReward <: AbstractReward end
 
 
 getindex(R::AbstractArrayReward, dims...) = getindex(R.array, dims...)
@@ -30,7 +30,7 @@ num_states(R::AbstractArrayReward) = size(R, 1)
 # Array type
 # ----------
 
-immutable ArrayReward{T<:Real,N} <: AbstractArrayReward
+struct ArrayReward{T<:Real,N} <: AbstractArrayReward
     array::Array{T,N}
 
     function ArrayReward(array::Array{T,N})
@@ -40,39 +40,39 @@ immutable ArrayReward{T<:Real,N} <: AbstractArrayReward
     end
 end
 
-ArrayReward{T,N}(array::Array{T,N}) = ArrayReward{T,N}(array)
+ArrayReward(array::Array{T,N}) where {T,N} = ArrayReward{T,N}(array)
 
 
 # type construction helper
 Reward(A::Array) = ArrayReward(A)
 
 
-num_actions{T}(R::ArrayReward{T,1}) =
+num_actions(R::ArrayReward{T,1}) where {T} =
     error(string(typeof(R))*" does not know about actions.")
-num_actions{T,N}(R::ArrayReward{T,N}) = size(R, N)
+num_actions(R::ArrayReward{T,N}) where {T,N} = size(R, N)
 
 
 # 1 dimension
 # -----------
 
-reward{T}(R::ArrayReward{T,1}, state) = getindex(R, state)
+reward(R::ArrayReward{T,1}, state) where {T} = getindex(R, state)
 
-reward{T}(R::ArrayReward{T,1}, state, action) = reward(R, state)
+reward(R::ArrayReward{T,1}, state, action) where {T} = reward(R, state)
 
-reward{T}(R::ArrayReward{T,1}, state, new_state, action) = reward(R, state)
+reward(R::ArrayReward{T,1}, state, new_state, action) where {T} = reward(R, state)
 
 
 # 2 dimensions
 # ------------
 
-reward{T}(R::ArrayReward{T,2}, state, action) = getindex(R, state, action)
+reward(R::ArrayReward{T,2}, state, action) where {T} = getindex(R, state, action)
 
-reward{T}(R::ArrayReward{T,2}, state, new_state, action) = reward(R, state, action)
+reward(R::ArrayReward{T,2}, state, new_state, action) where {T} = reward(R, state, action)
 
 # 3 dimensions
 # ------------
 
-reward{T}(R::ArrayReward{T,3}, state, new_state, action) =
+reward(R::ArrayReward{T,3}, state, new_state, action) where {T} =
     getindex(R, state, new_state, action)
 
 
@@ -81,7 +81,7 @@ reward{T}(R::ArrayReward{T,3}, state, new_state, action) =
 # Sparse type
 # -----------
 
-immutable SparseReward{Tv<:Real,Ti} <: AbstractArrayReward
+struct SparseReward{Tv<:Real,Ti} <: AbstractArrayReward
     array::SparseMatrixCSC{Tv,Ti}
 end
 

@@ -2,7 +2,7 @@ using Base.Test
 
 using MDPs
 
-function test1{P,R}(::Type{P}, ::Type{R}, s::Int, a::Int)
+function test1(::Type{P}, ::Type{R}, s::Int, a::Int) where {P,R}
   transition = rand(P, s, s, a)
   # Make each row of ``P`` sum to 1
   transition = transition ./ sum(transition, 1)
@@ -15,7 +15,7 @@ for T in (Float32, Float64)
   @test is_square_stochastic(P)
 end
 
-function test2{P,R}(::Type{P}, ::Type{R}, s::Int, a::Int)
+function test2(::Type{P}, ::Type{R}, s::Int, a::Int) where {P,R}
   transition = rand(P, s, s, a)
   # Make each row of ``P`` sum to 1
   for k = 1:a
@@ -38,7 +38,7 @@ for T in (Float32, Float64)
   @test is_square_stochastic(P)
 end
 
-function test3{P,R}(::Type{P}, ::Type{R}, s::Int, a::Int)
+function test3(::Type{P}, ::Type{R}, s::Int, a::Int) where {P,R}
   transition = rand(P, s, s, a)
   reward = rand(R, s, a)
   for k = 1:a
@@ -60,7 +60,7 @@ for T in (Float32, Float64)
   @test is_square_stochastic(P)
 end
 
-function test4{P,R}(::Type{P}, ::Type{R}, s::Int, a::Int)
+function test4(::Type{P}, ::Type{R}, s::Int, a::Int) where {P,R}
   transition = Array(P, s, s, a)
   reward = Array(R, s, a)
   for k = 1:a

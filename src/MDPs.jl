@@ -2,9 +2,6 @@ module MDPs
 
 using Compat
 
-if VERSION < v"0.4-dev"
-  using Docile
-end
 
 export # MDP types
        AbstractMDP,

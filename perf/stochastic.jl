@@ -18,34 +18,34 @@ using Base.Test
 P = rand(Float64, 1000, 1000, 3);
 P = P ./ sum(P, 1);
 
-function test1{T<:FloatingPoint}(A::AbstractArray{T})
+function test1(A::AbstractArray{T}) where T<:FloatingPoint
   r, c = size(A)[1:2]
   return (r == c) && all(abs(sum(A, 1) .- one(T)) .< 10eps(T))
 end
 @test test1(P)
 
-function test2{T<:FloatingPoint}(A::AbstractArray{T})
+function test2(A::AbstractArray{T}) where T<:FloatingPoint
   r, c = size(A)[1:2]
   ϵ = convert(T, 10)*eps(T)
   return (r == c) && all([abs(x - one(T)) < ϵ for x = sum(A, 1)])
 end
 @test test2(P)
 
-function test2b{T<:FloatingPoint}(A::AbstractArray{T})
+function test2b(A::AbstractArray{T}) where T<:FloatingPoint
   r, c = size(A)[1:2]
   X = sum(A, 1)
   return (r == c) && all([abs(x - one(T)) < 5eps(max(x, one(T))) for x = X])
 end
 @test test2b(P)
 
-function test3{T<:FloatingPoint}(A::AbstractArray{T})
+function test3(A::AbstractArray{T}) where T<:FloatingPoint
   r, c = size(A)[1:2]
   ϵ = convert(T, 10)*eps(T)
   return (r == c) && all(Bool[abs(x - one(T)) < ϵ for x = sum(A, 1)])
 end
 @test test3(P)
 
-function test4{T<:FloatingPoint}(A::AbstractArray{T})
+function test4(A::AbstractArray{T}) where T<:FloatingPoint
   r, c = size(A)[1:2]
   ϵ = convert(T, 10)*eps(T)
   for x = sum(A, 1)
@@ -55,7 +55,7 @@ function test4{T<:FloatingPoint}(A::AbstractArray{T})
 end
 @test test4(P)
 
-function test5{T<:FloatingPoint}(A::AbstractArray{T})
+function test5(A::AbstractArray{T}) where T<:FloatingPoint
   r, c, d = size(A)
   r == c || return false
   ϵ = convert(T, 10)*eps(T)
@@ -72,7 +72,7 @@ function test5{T<:FloatingPoint}(A::AbstractArray{T})
 end
 @test test5(P)
 
-function approx_equal_one{T}(x::T, max_rel_diff::T)
+function approx_equal_one(x::T, max_rel_diff::T) where T
   oneT = one(T)
   diff = abs(x - oneT)
   x = abs(x)
@@ -81,7 +81,7 @@ function approx_equal_one{T}(x::T, max_rel_diff::T)
   return true
 end
 
-function test6{T<:FloatingPoint}(A::AbstractArray{T})
+function test6(A::AbstractArray{T}) where T<:FloatingPoint
   r, c, d = size(A)
   r == c || return false
   for k = 1:d
@@ -97,7 +97,7 @@ function test6{T<:FloatingPoint}(A::AbstractArray{T})
 end
 @test test6(P)
 
-function test7{T<:FloatingPoint}(A::AbstractArray{T})
+function test7(A::AbstractArray{T}) where T<:FloatingPoint
   r, c, d = size(A)
   r == c || return false
   for k = 1:d
