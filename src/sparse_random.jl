@@ -3,7 +3,7 @@ sprand_reward(::Type{R}, states, actions) where {R} =
     sprand(states, actions, 1/3, x -> rand_reward(R, x))
 
 
-import Base.SparseMatrix.sprand_IJ
+import Base.SparseArrays.sprand_IJ
 
 
 function sprand_transition(::Type{T}, states) where T
@@ -31,7 +31,7 @@ function sprandom(
     ::Type{R},
     states,
     actions,
-) where {P<:FloatingPoint,R<:FloatingPoint}
+) where {P<:AbstractFloat,R<:AbstractFloat}
     transition = SparseMatrixCSC{P,Int}[
         sprand_transition(P, states) for a = 1:actions
     ]

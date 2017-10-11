@@ -1,5 +1,5 @@
 
-rand_reward(::Type{T}, dims...) where {T<:FloatingPoint} = 1 .- 2*rand(T, dims...)
+rand_reward(::Type{T}, dims...) where {T<:AbstractFloat} = 1 .- 2*rand(T, dims...)
 
 rand_reward(::Type{T}, dims...) where {T<:Integer} = rand(T, dims...)
 
@@ -33,7 +33,7 @@ function random(
     states,
     actions,
     mask::Nullable{Array{Bool,N}},
-) where {P<:FloatingPoint,R<:Real,N}
+) where {P<:AbstractFloat,R<:Real,N}
     transition = rand(P, states, states, actions)
     isnull(mask) ? nothing : zero_mask!(transition, get(mask))
     transition = sum_columns_to_one(transition)

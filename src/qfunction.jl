@@ -109,7 +109,7 @@ mutable struct VectorQFunction{V<:Real,A<:Integer} <: AbstractQFunction
     value::Vector{V}
     policy::Vector{A}
 
-    function VectorQFunction(value::Vector{V}, policy::Vector{A})
+    function VectorQFunction{V,A}(value::Vector{V}, policy::Vector{A}) where {V,A}
         length(value) == length(policy) || throw(
             DimensionMismatch("The lengths of value and policy must match.")
         )
@@ -135,7 +135,7 @@ QFunction(A::Vector, B::Vector) = VectorQFunction(A, B)
 ==(a::VectorQFunction, b::VectorQFunction) =
     (a.value == b.value) & (a.policy == b.policy)
 
-isequal(a::ArrayQFunction, b::ArrayQFunction) =
+isequal(a::VectorQFunction, b::VectorQFunction) =
     isequal(a.value, b.value) & isequal(a.policy, b.policy)
 
 copy(Q::VectorQFunction) = VectorQFunction(copy(Q.value), copy(Q.policy))

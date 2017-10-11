@@ -33,7 +33,7 @@ num_states(R::AbstractArrayReward) = size(R, 1)
 struct ArrayReward{T<:Real,N} <: AbstractArrayReward
     array::Array{T,N}
 
-    function ArrayReward(array::Array{T,N})
+    function ArrayReward{T,N}(array::Array{T,N}) where {T,N}
         N < 3 || (N == 3 && size(array, 1) == size(array, 2)) ||
             error("ArrayReward can not constructed with this Array.")
         new(array)

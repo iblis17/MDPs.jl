@@ -25,7 +25,8 @@ abstract type AbstractTransitionProbability end
 * getindex(P, s, t, a) -> the probability of transitioning from state s to state t given action a
 
 """ ->
-abstract type AbstractArrayTransitionProbability <: AbstractTransitionProbability end
+abstract type AbstractArrayTransitionProbability <:
+    AbstractTransitionProbability end
 
 
 
@@ -36,13 +37,14 @@ abstract type AbstractArrayTransitionProbability <: AbstractTransitionProbabilit
 struct ArrayTransitionProbability{T<:Real} <: AbstractArrayTransitionProbability
     array::Array{T,3}
 
-    function ArrayTransitionProbability(array::Array{T,3})
+    function ArrayTransitionProbability{T}(array::Array{T,3}) where {T<:Real}
         is_square_stochastic(array) || error("Not valid transition probability.")
         new(array)
     end
 end
 
-ArrayTransitionProbability(array::Array{T,3}) where {T} = ArrayTransitionProbability{T}(array)
+ArrayTransitionProbability(array::Array{T,3}) where {T} =
+    ArrayTransitionProbability{T}(array)
 
 
 TransitionProbability(A::Array{T,3}) where {T} = ArrayTransitionProbability(A)
