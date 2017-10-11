@@ -10,7 +10,7 @@ Check that a matrix is square and column-stochastic.
 `true` if M is square and column-stochastic, `false` otherwise.
 
 """ ->
-function is_square_stochastic{T}(M::AbstractMatrix{T})
+function is_square_stochastic(M::AbstractMatrix{T}) where T
     r, c = size(M)
     r == c || return false
     for j = 1:c
@@ -35,7 +35,7 @@ Check that the matrices along the third axis are square and column-stochastic.
 `true` if A is square and column-stochastic, `false` otherwise.
 
 """ ->
-function is_square_stochastic{_}(A::AbstractArray{_,3})
+function is_square_stochastic(A::AbstractArray{_,3}) where _
     for k = 1:size(A, 3)
         is_square_stochastic(A[:, :, k]) || return false
     end
@@ -51,7 +51,7 @@ end
 
 
 
-function ismdp{_}(transition::AbstractArray{_,3}, reward::AbstractVector)
+function ismdp(transition::AbstractArray{_,3}, reward::AbstractVector) where _
     # number of rows, columns and actions according to the transition
     # probability matrix
     ST = size(transition, 1)
@@ -61,13 +61,13 @@ function ismdp{_}(transition::AbstractArray{_,3}, reward::AbstractVector)
     return (ST == SR) && is_square_stochastic(transition)
 end
 
-function ismdp{_}(transition::AbstractArray{_,3}, reward::AbstractMatrix)
+function ismdp(transition::AbstractArray{_,3}, reward::AbstractMatrix) where _
     ST, AT = size(transition)[[1, 3]]
     SR, AR = size(reward)
     return (ST == SR) && (AT == AR) && is_square_stochastic(transition)
 end
 
-function ismdp{P,R}(transition::AbstractArray{P,3}, reward::AbstractArray{R,3})
+function ismdp(transition::AbstractArray{P,3}, reward::AbstractArray{R,3}) where {P,R}
     S1T, S2T, AT = size(transition)
     S1R, S2R, AR = size(reward)
     return (S1T == S1R) && (S2T == S2R) && (AT == AR) && is_square_stochastic(transition)
@@ -87,7 +87,7 @@ function ismdp(transition::Vector, reward::AbstractMatrix)
     return (AT == AR) && _all_row_lengths_equal(SR, transition) && is_square_stochastic(transition)
 end
 
-function ismdp{_}(transition::Vector, reward::AbstractArray{_,3})
+function ismdp(transition::Vector, reward::AbstractArray{_,3}) where _
     AT = length(transition)
     S1R, S2R, AR = size(reward)
     return (AT == AR) && (S1R == S2R) && _all_row_lengths_equal(S1R, transition) && is_square_stochastic(transition)

@@ -1,4 +1,4 @@
-abstract AbstractMDP
+abstract type AbstractMDP end
 
 
 # -----------------------------------------------------
@@ -15,7 +15,7 @@ num_actions(mdp::AbstractMDP) = mdp.n_actions
 # The MDP type
 # ------------
 
-immutable MDP <: AbstractMDP
+struct MDP <: AbstractMDP
     transition::AbstractTransitionProbability
     reward::AbstractReward
     n_states::Int

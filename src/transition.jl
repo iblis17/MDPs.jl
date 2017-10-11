@@ -12,7 +12,7 @@ import Base: convert, ndims, size
 * probability(P, s, t, a) -> the probability of transitioning from state s to state t given action a
 
 """ ->
-abstract AbstractTransitionProbability
+abstract type AbstractTransitionProbability end
 
 
 @doc """
@@ -25,7 +25,7 @@ abstract AbstractTransitionProbability
 * getindex(P, s, t, a) -> the probability of transitioning from state s to state t given action a
 
 """ ->
-abstract AbstractArrayTransitionProbability <: AbstractTransitionProbability
+abstract type AbstractArrayTransitionProbability <: AbstractTransitionProbability end
 
 
 
@@ -33,7 +33,7 @@ abstract AbstractArrayTransitionProbability <: AbstractTransitionProbability
 # Array type
 # ----------
 
-immutable ArrayTransitionProbability{T<:Real} <: AbstractArrayTransitionProbability
+struct ArrayTransitionProbability{T<:Real} <: AbstractArrayTransitionProbability
     array::Array{T,3}
 
     function ArrayTransitionProbability(array::Array{T,3})
@@ -42,10 +42,10 @@ immutable ArrayTransitionProbability{T<:Real} <: AbstractArrayTransitionProbabil
     end
 end
 
-ArrayTransitionProbability{T}(array::Array{T,3}) = ArrayTransitionProbability{T}(array)
+ArrayTransitionProbability(array::Array{T,3}) where {T} = ArrayTransitionProbability{T}(array)
 
 
-TransitionProbability{T}(A::Array{T,3}) = ArrayTransitionProbability(A)
+TransitionProbability(A::Array{T,3}) where {T} = ArrayTransitionProbability(A)
 
 
 # Base
@@ -87,12 +87,12 @@ probability(P::ArrayTransitionProbability, a) = P[:, :, a]
 # Sparse array type
 # -----------------
 
-immutable SparseArrayTransitionProbability{Tv<:Real,Ti} <: AbstractArrayTransitionProbability
+struct SparseArrayTransitionProbability{Tv<:Real,Ti} <: AbstractArrayTransitionProbability
     array::Vector{SparseMatrixCSC{Tv,Ti}}
 end
 
 
-TransitionProbability{T<:SparseMatrixCSC}(A::Vector{T}) =
+TransitionProbability(A::Vector{T}) where {T<:SparseMatrixCSC} =
     SparseArrayTransitionProbability(A)
 
 
@@ -112,7 +112,7 @@ probability(P::SparseArrayTransitionProbability, a) = getindex(P.array, a)
 # Function type
 # -------------
 
-immutable FunctionTransitionProbability <: AbstractTransitionProbability
+struct FunctionTransitionProbability <: AbstractTransitionProbability
     func::Function
     states::Int
     actions::Int
